@@ -4,6 +4,7 @@
  * This code is under MIT licence (see https://github.com/Irvyne/license/blob/master/MIT.md)
  */
 
+// Je charge toutes les librairies
 require __DIR__.'/_header.php';
 
 $perPage = 6; // nbArticleParPage
@@ -21,6 +22,12 @@ if ($currentPage > $nbPages) {
 
 $articles = getArticles($link, null, ($currentPage-1)*$perPage, $perPage);
 
-include __DIR__.'/template/articles.php';
-
+echo $twig ->render('articles.html.twig',[
+    'articles' => $articles,
+    'perpage' => $perPage,
+    'currentPage' => $currentPage,
+    'nbPages' => $nbPages,
+    'connected' => isConnected(),
+    'username' => 'blobfish',
+]);
 require __DIR__.'/_footer.php';
