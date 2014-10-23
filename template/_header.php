@@ -65,9 +65,9 @@
             <ul class="nav navbar-nav navbar-right">
                 <?php if (true === isConnected()) { ?>
                     <li><a href="#">Welcome <?php echo getSession()['username']; ?>!</a></li>
-                    <li><a href="/logout.php">Logout</a></li>
+                    <li><a href="logout.php">Logout</a></li>
                 <?php } else { ?>
-                    <li><a href="/login.php">Login</a></li>
+                    <li><a href="login.php">Login</a></li>
                 <?php } ?>
             </ul>
         </div><!--/.nav-collapse -->

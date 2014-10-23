@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+{% block content %}
+    <h1>Administration: List Articles</h1>
+
+    <form action="" method="post" role="form" enctype="multipart/form-data">
+        <label for="title">Title: </label>
+        <input id="title" class="form-control" name="title" type="text" placeholder="Title" required autofocus {% if article.title is not empty %}value="{{ article.title }}"{% endif %}>
+        <br>
+
+        <label for="content">Content: </label>
+        <textarea id="content" class="form-control" name="content" cols="30" rows="10" required>{% if article.content is not empty %}{{ article.content }}{% endif %}</textarea>
+        <br>
+
+        <label for="enabled">Enabled: </label>
+        <input id="enabled" class="form-control" name="enabled" type="checkbox"  {% if article.enabled == 1 %}checked{% endif %}>
+        <br>
+
+        <label for="image">Image: </label>
+        <input id="image" class="form-control" name="image" type="file">
+        <br>
+
+        <label for="category">Category: </label>
+        <select id="category" class="form-control" name="category" required>
+
+            {% for category in categories %}
+                <option value="{{ category.id }}"
+                {% if( article.category_id is not empty) and (category.id == article.category_id)  %}selected {% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+            {% for tag in tags %}
+                <label for="tag{{ tag.id }}" class="checkbox-inline">
+                    <input type="checkbox" id="tag{{ tag.id }}" name="tags[]" value="{{ tag.id }}">{{ tag.name }}
+                </label>
+            {% endfor %}
+        <br>
+        <br>
+
+        <input class="btn btn-default" name="submitArticle" type="submit" value="Submit Form">
+    </form>
+{% endblock %}

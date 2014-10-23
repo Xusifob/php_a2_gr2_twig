@@ -25,10 +25,17 @@ if (!empty($_GET['id'])) {
 
         header('Location: admin-article-list.php');
     }
-
+    // Je récupère les catégories, les tags et les articles
     $article = getArticle($link, $id);
+    $categories = getCategories($link);
+    $tags = getTags($link);
 }
-
-include __DIR__.'/template/admin-article-add.php';
-
+// J'envoie dans le render les bonnes valeurs
+echo $twig ->render('admin-article-add.html.twig',[
+    'article' => $article,
+    'connected' => isConnected(),
+    'username' => 'blobfish',
+    'categories' => $categories,
+    'tags' => $tags,
+]);
 require __DIR__.'/_footer.php';
