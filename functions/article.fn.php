@@ -13,9 +13,10 @@
  *
  * @return array
  */
-function getEnabledArticles($link, $enabled = true, $userId = null, $from = null, $number = null)
+function getEnabledArticles(PDO $db, $enabled = true, $userId = null, $from = null, $number = null)
 {
     //TODO https://github.com/Irvyne/A2_PHP_MYSQL_GR2
+
     $sql = 'SELECT * FROM article';
 
     if (null !== $userId) {
@@ -34,21 +35,14 @@ function getEnabledArticles($link, $enabled = true, $userId = null, $from = null
     }
 
 
-    // LIMIT 5
-    // LIMIT 12, 6
-    // LIMIT 5, 0
 
-    $result = mysqli_query($link, $sql);
-
-    $articles = [];
-    while ($article = mysqli_fetch_assoc($result)) {
-        $articles[] = $article;
-    }
+    $pdoStmt = $db->query($sql);
+    $articles =  $pdoStmt->fetchAll(PDO::FETCH_ASSOC);
 
     return $articles;
 }
 
-function getArticles($link, $userId = null, $from = null, $number = null)
+function getArticles(PDO $db, $userId = null, $from = null, $number = null)
 {
     //TODO https://github.com/Irvyne/A2_PHP_MYSQL_GR2
     $sql = 'SELECT * FROM article';
@@ -65,17 +59,11 @@ function getArticles($link, $userId = null, $from = null, $number = null)
         $sql .= ' LIMIT '.(int)$number;
     }
 
-
     // LIMIT 5
     // LIMIT 12, 6
     // LIMIT 5, 0
-
-    $result = mysqli_query($link, $sql);
-
-    $articles = [];
-    while ($article = mysqli_fetch_assoc($result)) {
-        $articles[] = $article;
-    }
+    $pdoStmt = $db->query($sql);
+    $articles =  $pdoStmt->fetchAll(PDO::FETCH_ASSOC);
 
     return $articles;
 }
@@ -86,17 +74,16 @@ function getArticles($link, $userId = null, $from = null, $number = null)
  *
  * @return array
  */
-function getArticlesFromCategory($link, $categoryId)
+function getArticlesFromCategory($db, $categoryId)
 {
-    $sql = 'SELECT * FROM article WHERE category_id='.mysqli_real_escape_string($link, $categoryId);
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM article WHERE category_id= categoryId';
 
-    $articles = [];
-    while ($article = mysqli_fetch_assoc($result)) {
-        $articles[] = $article;
-    }
-
-    return $articles;
+    $req = $db->prepare($sql);
+    $req->execute(array(
+        "categoryId" => $categoryId
+    ));
+    $result = $req->fetchAll(PDO::FETCH_ASSOC);
+    return $result;
 }
 
 /**
@@ -105,15 +92,15 @@ function getArticlesFromCategory($link, $categoryId)
  *
  * @return array
  */
-function getArticlesFromTag($link, $tagId)
+function getArticlesFromTag($db, $tagId)
 {
-    $sql = 'SELECT * FROM article JOIN article_tag at ON at.article_id='.mysqli_real_escape_string($link, $tagId);
-    $result = mysqli_query($link, $sql);
+    $sql = 'SELECT * FROM article JOIN article_tag at ON at.article_id= articleId';
 
-    $articles = [];
-    while ($article = mysqli_fetch_assoc($result)) {
-        $articles[] = $article;
-    }
+    $req = $db->prepare($sql);
+    $req->execute(array(
+        "articleId" => $tagId
+    ));
+    $articles = $req->fetchAll(PDO::FETCH_ASSOC);
 
     return $articles;
 }
@@ -122,14 +109,18 @@ function getArticlesFromTag($link, $tagId)
  * @param $link
  * @param $id
  *
- * @return array|null
- */
-function getArticle($link, $id)
-{
-    $sql    = 'SELECT * FROM article WHERE id='.mysqli_real_escape_string($link, $id);
-    $result = mysqli_query($link, $sql);
+ * @return array|null */
 
-    return mysqli_fetch_assoc($result);
+function getArticle(PDO $db, $id)
+{
+    $sql    = 'SELECT * FROM article WHERE id= :id';
+    $req = $db->prepare($sql);
+    $req->execute(array(
+        ":id" => $id
+    ));
+
+    $result = $req->fetch(PDO::FETCH_ASSOC);
+    return $result;
 }
 
 /**
@@ -196,14 +187,16 @@ function updateArticle($link, $id, array $update)
  *
  * @return bool|mysqli_result
  */
-function enableArticle($link, $id, $enabled)
+function enableArticle(PDO $db, $id, $enabled)
 {
-    $sql = 'UPDATE article SET enabled='.mysqli_real_escape_string(
-            $link,
-            $enabled
-        ).' WHERE id='.mysqli_real_escape_string($link, $id);
+    $sql = 'UPDATE article SET enabled= :enabled WHERE id= :id';
 
-    return mysqli_query($link, $sql);
+    $req = $db->prepare($sql);
+    $req->execute(array(
+        ':id' => $id,
+        ':enabled' => $enabled
+    ));
+    return true;
 }
 
 /**
@@ -233,12 +226,16 @@ function removeArticle($link, $id)
  *
  * @return int
  */
-function countArticles($link)
+function countArticles($db)
 {
-    $sql    = 'SELECT COUNT(*) AS nb FROM article';
-    $result = mysqli_query($link, $sql);
+    $sql    = 'SELECT COUNT(*) AS nb FROM article WHERE enabled = :enabled';
+    $req = $db->prepare($sql);
+    $req->execute(array(
+        ":enabled" => 1,
+    ));
 
-    return (int)mysqli_fetch_assoc($result)['nb'];
+    $result = $req->fetchAll(PDO::FETCH_ASSOC);
+    return $result;
 }
 
 /**

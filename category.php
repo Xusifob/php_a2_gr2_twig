@@ -12,7 +12,7 @@ if (!empty($_GET['id'])) {
     if (!$category) {
         header('Location: categories.php');
     }
-    $articles = getArticlesFromCategory($link, $category['id']);
+    $articles = getArticlesFromCategory($db, $category['id']);
 } else {
     header('Location: index.php');
 }

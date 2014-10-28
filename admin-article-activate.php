@@ -11,7 +11,7 @@ if (!empty($_GET['id']) && !empty($_GET['activate'])) {
     $id = (int)$_GET['id'];
     $type = 1 === (int)$_GET['activate'] ? 1 : 0;
 
-    enableArticle($link, $id, $type);
+    enableArticle($db, $id, $type);
 }
 
 header('Location: admin-article-list.php');

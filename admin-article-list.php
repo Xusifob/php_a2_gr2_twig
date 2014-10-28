@@ -6,7 +6,7 @@
 
 require __DIR__.'/_header-admin.php';
 
-$articles = getArticles($link);
+$articles = getArticles($db);
 
 // Réduction de la taille de l'article "maison" car twig ne le gère pas sans plug-in (je n'ai pas réussi à l'installer)
 $i = count($articles);
@@ -24,6 +24,6 @@ while($j<$i){
 echo $twig ->render('admin-article-list.html.twig',[
     'articles' => $articles,
     'connected' => isConnected(),
-    'username' => 'blobfish',
+    'username' => $_SESSION['username'],
 ]);
 require __DIR__.'/_footer.php';

@@ -2,7 +2,7 @@
 
 {% block content %}
     {%  set i = 0  %}
-    {% for article in articles if article.enabled %}
+    {% for article in articles %}
         {% if (i%3 == 0) %}
             <div class="row">
         {% endif %}
